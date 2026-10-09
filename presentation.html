@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRURU MUSEUM - Executive Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        :root {
+            --gr-void: #0B0B0F;
+            --gr-graphite: #17171F;
+            --gr-grid: #2C2C3A;
+            --gr-fog: #8A8A9E;
+            --gr-paper: #F2EDE3;
+            --gr-lime: #D7FF3A;
+            --gr-ember: #FF5A1F;
+            --gr-violet: #8C6BFF;
+            --gr-cyan: #2EE6FF;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--gr-void);
+            color: var(--gr-paper);
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: 
+                linear-gradient(var(--gr-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--gr-grid) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+        h1, h2, h3 { font-family: 'Chakra Petch', sans-serif; margin-top: 0; }
+        .mono { font-family: 'IBM Plex Mono', monospace; }
+        
+        #presentation {
+            width: 1440px;
+            height: 810px;
+            max-width: 100vw;
+            max-height: 100vh;
+            position: relative;
+            background: var(--gr-void);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+            border: 1px solid var(--gr-grid);
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(0.95);
+            display: flex;
+            flex-direction: column;
+            padding: 64px;
+            box-sizing: border-box;
+        }
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+        
+        .hud-panel {
+            background: var(--gr-graphite);
+            border: 1px solid var(--gr-grid);
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+            padding: 32px;
+            position: relative;
+        }
+        
+        .label {
+            display: inline-block;
+            background: var(--gr-lime);
+            color: var(--gr-void);
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .highlight { color: var(--gr-lime); }
+        .ember { color: var(--gr-ember); }
+        .cyan { color: var(--gr-cyan); }
+        
+        .flex-row { display: flex; gap: 32px; align-items: stretch; height: 100%; }
+        .flex-col { display: flex; flex-direction: column; flex: 1; justify-content: center; }
+        .img-contain { max-width: 100%; object-fit: contain; border: 1px solid var(--gr-grid); }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0; left: 0; height: 4px; background: var(--gr-lime);
+            transition: width 0.3s;
+        }
+        
+        /* Specific Layouts */
+        .title-slide h1 { font-size: clamp(3rem, 8vw, 7.5rem); margin-bottom: 16px; line-height: 1.1; }
+        .title-slide .logo { width: 120px; margin-bottom: 24px; border-radius: 50%; }
+        
+        .target-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 32px; }
+        .target-card { text-align: center; }
+        
+        #graph-container { width: 100%; height: 400px; background: var(--gr-graphite); border: 1px solid var(--gr-grid); margin-top: 24px; }
+        
+        .nav-hint { position: absolute; bottom: 24px; right: 32px; color: var(--gr-fog); font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div id="presentation">
+    <!-- Slide 1 -->
+    <div class="slide active title-slide">
+        <div class="flex-col" style="align-items: center; text-align: center;">
+            <img src="logo.jpg" class="logo" alt="Gruru Logo">
+            <h1>GRURU <span class="highlight">MUSEUM</span></h1>
+            <div class="label">GRM-2026-BRF-001</div>
+            <h2 style="color: var(--gr-fog);">New Knowledge. New Storytelling. Built for Everyday Living.</h2>
+            <p style="margin-top: 48px; max-width: 600px; color: var(--gr-paper);">
+                นำเสนอผู้บริหาร: โปรเจกต์พิพิธภัณฑ์ความรู้ดิจิทัลที่พลิกโฉมการเรียนรู้<br>
+                ให้เป็นประสบการณ์แบบ Future Archaeology
+            </p>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+        <div class="flex-row">
+            <div class="flex-col">
+                <div class="label">01 // THE VISION</div>
+                <h2 style="font-size: 3rem; margin-bottom: 16px;">อดีตคือ<span class="ember">ข้อมูล</span><br>อนาคตคือ<span class="cyan">เรื่องเล่า</span></h2>
+                <p style="font-size: 1.2rem; color: var(--gr-fog); line-height: 1.7;">
+                    "Reviving hidden knowledge from the past as new stories, built for everyday living."
+                </p>
+                <div class="hud-panel" style="margin-top: 24px;">
+                    <ul style="line-height: 1.8; margin: 0; padding-left: 20px;">
+                        <li><b>Excavate:</b> ขุดค้นข้อมูลมีแหล่งอ้างอิงชัดเจน</li>
+                        <li><b>Decode:</b> ถอดรหัสเป็นโหนดความสัมพันธ์</li>
+                        <li><b>Retell:</b> เล่าใหม่แบบ Visual Storytelling</li>
+                        <li><b>Connect:</b> เชื่อมโยงความรู้ข้ามยุคสมัย</li>
+                        <li><b>Apply:</b> จบด้วย Everyday Takeaway นำไปใช้จริงได้ทันที</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex-col">
+                <img src="illustration.jpg" class="img-contain" style="height: 100%; object-fit: cover;" alt="Future Archaeology">
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+        <div class="flex-col">
+            <div class="label">02 // TARGET AUDIENCE</div>
+            <h2 style="font-size: 2.5rem; text-align: center;">ใครคือผู้เข้าชม GRURU MUSEUM?</h2>
+            <p style="text-align: center; color: var(--gr-fog);">เจาะกลุ่มอายุ 22-40 ปี ที่อยากรู้ลึกแต่ไม่อยากรู้สึกเหมือนนั่งเรียน</p>
+            
+            <div class="target-cards">
+                <div class="hud-panel target-card">
+                    <h3 class="highlight">Curious Starter</h3>
+                    <div class="mono" style="color: var(--gr-fog); margin-bottom: 16px;">(22-27 ปี)</div>
+                    <p>First jobber ชอบเนื้อหากระชับ 3-5 นาที ดีไซน์สวยงาม พร้อมแชร์ลงโซเชียล</p>
+                </div>
+                <div class="hud-panel target-card">
+                    <h3 class="cyan">Creative Pro</h3>
+                    <div class="mono" style="color: var(--gr-fog); margin-bottom: 16px;">(25-34 ปี)</div>
+                    <p>นักออกแบบ/การตลาด ต้องการ Interactive Graph เจาะลึกหาแรงบันดาลใจ</p>
+                </div>
+                <div class="hud-panel target-card">
+                    <h3 class="ember">Lifelong Learner</h3>
+                    <div class="mono" style="color: var(--gr-fog); margin-bottom: 16px;">(30-40 ปี)</div>
+                    <p>วัยทำงาน/ครอบครัว เน้นความน่าเชื่อถือ และ Everyday Takeaway ที่ชัดเจน</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+        <div class="flex-col">
+            <div class="label">03 // INTERACTIVE EXPERIENCE</div>
+            <h2 style="font-size: 2.5rem;">Data Booming & Interactive Graph</h2>
+            <p style="color: var(--gr-fog);">เข้าใจความซับซ้อนของข้อมูลได้ใน 3 วินาที ผ่าน Interactive Graph Visualization</p>
+            
+            <div id="graph-container"></div>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+                <div><span style="color: var(--gr-cyan);">● วิทยาศาสตร์</span></div>
+                <div><span style="color: var(--gr-ember);">⬢ ประวัติศาสตร์</span></div>
+                <div><span style="color: var(--gr-violet);">■ เทคโนโลยี</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+        <div class="flex-row">
+            <div class="flex-col">
+                <img src="graph-3.png" class="img-contain" style="height: 100%;" alt="UI Screenshot">
+            </div>
+            <div class="flex-col">
+                <div class="label">04 // DESIGN LANGUAGE</div>
+                <h2 style="font-size: 3rem;">Past Warm<br>× <span class="highlight">Future Electric</span></h2>
+                <div class="hud-panel" style="margin-top: 24px;">
+                    <p>ดีไซน์แบบ <b>Modern Art ผสม Sci-fi ห้องแล็บ</b></p>
+                    <p style="color: var(--gr-fog); font-size: 0.9rem;">
+                        ใช้โหมดมืดเป็นค่าเริ่มต้น (Void Black) ตัดกับสีสว่าง (Specimen Lime) เพื่อสร้างจุดเด่น <br><br>
+                        เลย์เอาต์ยึดระบบกริด จัดสเปซกว้างแบบ White Cube วางองค์ประกอบเรียบหรู แต่แฝงลูกเล่นแบบ Sci-fi
+                    </p>
+                </div>
+                <h3 style="margin-top: 24px;">Next Steps</h3>
+                <ul style="color: var(--gr-paper);">
+                    <li>อนุมัติงบประมาณและทรัพยากรการพัฒนา (Development Phase)</li>
+                    <li>เริ่มสร้าง Design Tokens & Style Guide เบื้องต้น</li>
+                    <li>พัฒนาต้นแบบ Data Booming Engine ด้วย D3.js</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-bar" id="progress"></div>
+    <div class="nav-hint">Press [Space] or [→] to navigate</div>
+</div>
+
+<script>
+    // Slide Navigation
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progress');
+
+    function updateSlide() {
+        slides.forEach((s, i) => {
+            s.classList.remove('active');
+            if(i === currentSlide) s.classList.add('active');
+        });
+        progress.style.width = ((currentSlide + 1) / slides.length) * 100 + '%';
+        
+        // Trigger D3 animation if graph slide is active
+        if (currentSlide === 3 && !window.graphInitialized) {
+            initGraph();
+            window.graphInitialized = true;
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            if (currentSlide < slides.length - 1) currentSlide++;
+            updateSlide();
+        } else if (e.key === 'ArrowLeft') {
+            if (currentSlide > 0) currentSlide--;
+            updateSlide();
+        }
+    });
+    
+    // Click to next slide
+    document.getElementById('presentation').addEventListener('click', (e) => {
+        // Prevent click if clicking on the graph
+        if(e.target.closest('#graph-container')) return;
+        
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlide();
+        }
+    });
+
+    updateSlide();
+
+    // D3 Interactive Graph Simulation (Data Booming concept)
+    function initGraph() {
+        const container = document.getElementById('graph-container');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        const svg = d3.select('#graph-container')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+
+        // Colors based on category
+        const colors = {
+            'science': '#2EE6FF', // Cyan
+            'history': '#FF5A1F', // Ember
+            'tech': '#8C6BFF'     // Violet
+        };
+
+        const nodes = [
+            { id: 'Center', r: 24, cat: 'science', fixed: true, fx: width/2, fy: height/2 },
+            { id: 'N1', r: 12, cat: 'history' }, { id: 'N2', r: 16, cat: 'tech' },
+            { id: 'N3', r: 10, cat: 'science' }, { id: 'N4', r: 14, cat: 'history' },
+            { id: 'N5', r: 18, cat: 'tech' }, { id: 'N6', r: 12, cat: 'science' },
+            { id: 'N7', r: 15, cat: 'tech' }, { id: 'N8', r: 10, cat: 'history' }
+        ];
+
+        const links = [
+            { source: 'Center', target: 'N1' }, { source: 'Center', target: 'N2' },
+            { source: 'Center', target: 'N3' }, { source: 'Center', target: 'N4' },
+            { source: 'Center', target: 'N5' }, { source: 'N2', target: 'N6' },
+            { source: 'N5', target: 'N7' }, { source: 'N1', target: 'N8' },
+            { source: 'N4', target: 'N8' }
+        ];
+
+        const simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(80))
+            .force('charge', d3.forceManyBody().strength(-200))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collide', d3.forceCollide().radius(d => d.r + 10));
+
+        const link = svg.append('g')
+            .selectAll('line')
+            .data(links)
+            .join('line')
+            .attr('stroke', '#2C2C3A')
+            .attr('stroke-width', 2);
+
+        const node = svg.append('g')
+            .selectAll('circle')
+            .data(nodes)
+            .join('circle')
+            .attr('r', 0) // Start with 0 for booming effect
+            .attr('fill', d => colors[d.cat])
+            .attr('stroke', '#17171F')
+            .attr('stroke-width', 2)
+            .call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+
+        // Booming Effect Transition
+        node.transition()
+            .duration(800)
+            .delay((d, i) => i * 100)
+            .attr('r', d => d.r)
+            .ease(d3.easeElasticOut);
+
+        // Hover Effect
+        node.on('mouseover', function() {
+            d3.select(this).attr('stroke', '#D7FF3A').attr('stroke-width', 3);
+        }).on('mouseout', function() {
+            d3.select(this).attr('stroke', '#17171F').attr('stroke-width', 2);
+        });
+
+        simulation.on('tick', () => {
+            link
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+
+            node
+                .attr('cx', d => Math.max(d.r, Math.min(width - d.r, d.x)))
+                .attr('cy', d => Math.max(d.r, Math.min(height - d.r, d.y)));
+        });
+
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+    }
+</script>
+</body>
+</html>
